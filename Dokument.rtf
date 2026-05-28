@@ -1,0 +1,252 @@
+{\rtf1\ansi\ansicpg1250\deff0\nouicompat\deflang1045{\fonttbl{\f0\fnil\fcharset238 Calibri;}{\f1\fnil\fcharset0 Calibri;}{\f2\fnil Calibri;}}
+{\*\generator Riched20 10.0.19041}\viewkind4\uc1 
+\pard\sa200\sl276\slmult1\f0\fs22 haskel cz1\f1\lang21\line Zadanie 1: Modyfikacja zapisu z prefix na infixW Haskellu domy\f0\'9clnie funkcje o nazwach alfanumerycznych wywo\'b3uje si\'ea prefiksowo (funkcja x y), a operatory symboliczne infiksowo (x + y). Aby wywo\'b3a\'e6 zwyk\'b3\'b9 funkcj\'ea infiksowo, nale\'bfy otoczy\'e6 jej nazw\'ea backtickami (odwr\f1\lang1033\'f3conymi apostrofami: `).Zmodyfikowany program wygl\f0\'b9da nast\'eapuj\'b9co:HaskelladdMe :: Integer -> Integer -> Integer\par
+addMe x y = x + y  -- Definicj\'ea r\f1\'f3wnie\f0\'bf mo\'bfemy upro\'9cci\'e6 do standardowego operatora +\par
+main :: IO ()\par
+main = do\par
+  putStr "Sum of x + y = "\par
+  print (10 `addMe` 25) -- Wywo\'b3anie infiksowe za pomoc\'b9 backtick\f1\'f3w\par
+Zadanie 2: Funkcje square, cube i averageDla funkcji average warto u\f0\'bfy\'e6 bardziej og\f1\'f3lnego typu liczbowego (np. Fractional), poniewa\f0\'bf \'9crednia z dw\f1\'f3ch liczb ca\f0\'b3kowitych mo\'bfe by\'e6 u\'b3amkiem.Haskell-- Kwadrat liczby\par
+square :: Num a => a -> a\par
+square x = x * x\par
+\par
+-- Sze\'9ccian liczby\par
+cube :: Num a => a -> a\par
+cube x = x * x * x\par
+\par
+-- \'8crednia dw\f1\'f3ch liczb (wymaga typu zmiennoprzecinkowego / u\f0\'b3amkowego)\par
+average :: Fractional a => a -> a -> a\par
+average x y = (x + y) / 2\par
+Zadanie 3: R\f1\'f3wnanie kwadratowe (if..else oraz stra\f0\'bfnicy/case)Zak\'b3adamy, \'bfe szukamy rozwi\'b9za\'f1 w dziedzinie liczb rzeczywistych. Funkcja zwraca list\'ea pierwiastk\f1\'f3w (pust\f0\'b9, jednoelementow\'b9 lub dwuelementow\'b9).Wersja I: Przy u\'bfyciu if..then..elseHaskellsolveQuadraticIf :: (Ord a, Floating a) => a -> a -> a -> [a]\par
+solveQuadraticIf a b c =\par
+  let delta = b*b - 4*a*c\par
+  in if delta < 0\par
+     then []\par
+     else if delta == 0\par
+          then [-b / (2*a)]\par
+          else [(-b - sqrt delta) / (2*a), (-b + sqrt delta) / (2*a)]\par
+Wersja II: Przy u\'bfyciu stra\'bfnik\f1\'f3w (Guards) / konstrukcji caseW Haskellu stra\f0\'bfnicy (zapisywani za pomoc\'b9 pionowej kreski |) s\'b9 bezpo\'9crednim i najbardziej idiomatycznym odpowiednikiem instrukcji warunkowych dla wielu opcji.Haskell-- Wersja ze stra\'bfnikami (Guards)\par
+solveQuadraticGuards :: (Ord a, Floating a) => a -> a -> a -> [a]\par
+solveQuadraticGuards a b c\par
+  | delta < 0  = []\par
+  | delta == 0 = [-b / (2*a)]\par
+  | otherwise  = [(-b - sqrt delta) / (2*a), (-b + sqrt delta) / (2*a)]\par
+  where delta = b*b - 4*a*c\par
+\par
+-- Alternatywna wersja z jawn\'b9 konstrukcj\'b9 `case ... of` badaj\'b9c\'b9 znak delty\par
+solveQuadraticCase :: (Ord a, Floating a) => a -> a -> a -> [a]\par
+solveQuadraticCase a b c =\par
+  let delta = b*b - 4*a*c\par
+  in case compare delta 0 of\par
+       LT -> []\par
+       EQ -> [-b / (2*a)]\par
+       GT -> [(-b - sqrt delta) / (2*a), (-b + sqrt delta) / (2*a)]\par
+Zadanie 4: SilniaNajprostsza implementacja wykorzystuje dopasowanie wzorca (pattern matching) i rekurencj\'ea:Haskellfactorial :: (Integral a) => a -> a\par
+factorial 0 = 1\par
+factorial n | n > 0 = n * factorial (n - 1)\par
+factorial _ = error "Silnia jest zdefiniowana dla liczb nieujemnych"\par
+Zadanie 5: Ci\'b9g FibonacciegoMo\'bfemy napisa\'e6 funkcj\'ea zwracaj\'b9c\'b9 $n$-ty wyraz ci\'b9gu Fibonacciego (gdzie $F_0 = 0, F_1 = 1$):Haskellfib :: (Integral a) => a -> a\par
+fib 0 = 0\par
+fib 1 = 1\par
+fib n | n > 1 = fib (n - 1) + fib (n - 2)\par
+fib _ = error "Indeks nie mo\'bfe by\'e6 ujemny"\par
+Wskaz\f1\'f3wka: Powy\f0\'bfsza metoda rekurencyjna jest ma\'b3o wydajna dla du\'bfych $n$. W celu optymalizacji mo\'bfna stworzy\'e6 niesko\'f1czon\'b9 list\'ea wszystkich wyraz\f1\'f3w: fibs = 0 : 1 : zipWith (+) fibs (tail fibs) i pobiera\f0\'e6 z niej odpowiedni element.Zadanie 6: R\f1\'f3\f0\'bfnica mi\'eadzy najwi\'eaksz\'b9 i najmniejsz\'b9 liczb\'b9Haskell posiada wbudowane funkcje max i min, kt\f1\'f3re przyjmuj\f0\'b9 dwa argumenty. Mo\'bfemy je z\'b3o\'bfy\'e6, aby obs\'b3u\'bfy\'e6 trzy liczby.Haskellminmax :: (Ord a, Num a) => a -> a -> a -> a\par
+minmax x y z = max3 x y z - min3 x y z\par
+  where\par
+    max3 a b c = max a (max b c)\par
+    min3 a b c = min a (min b c)\par
+Zadanie 7: Suma kwadrat\f1\'f3w dw\'f3ch liczbWykorzystujemy napisan\f0\'b9 wcze\'9cniej logik\'ea podnoszenia do kwadratu lub standardowy operator pot\'eagowania ^.HaskellsumOfSquares :: Num a => a -> a -> a\par
+sumOfSquares x y = x^2 + y^2\par
+Zadanie 8: Ostatnia cyfra danej liczbyAby poprawnie obs\'b3u\'bfy\'e6 liczby ujemne (zgodnie z przyk\'b3adem w tre\'9cci zadania, gdzie dla -17 wynikiem jest 7), musimy najpierw wyci\'b9gn\'b9\'e6 warto\'9c\'e6 bezwzgl\'eadn\'b9 z liczby za pomoc\'b9 funkcji abs, a nast\'eapnie u\'bfy\'e6 operatora reszty z dzielenia przez 10 (rem lub mod).HaskelllastDigit :: Integral a => a -> a\par
+lastDigit x = abs x `rem` 10\line haskle cz2\line Zadanie 1: Leniwa ewaluacja (Lazy Evaluation)Haskell optymalizuje obliczenia dzi\'eaki mechanizmowi zwanemu leniwa ewaluacja (lazy evaluation), po\'b3\'b9czonemu z wsp\f1\'f3\f0\'b3dzieleniem (sharing / graph reduction). Oznacza to, \'bfe \'bfadne wyra\'bfenie nie jest obliczane, dop\f1\'f3ki jego wynik nie jest naprawd\f0\'ea potrzebny (np. do wypisania na ekran przez print).Przyk\'b3ad a): [0..] to niesko\'f1czona lista. W j\'eazykach o ewaluacji gorliwej (strict), program zawiesi\'b3by si\'ea, pr\f1\'f3buj\f0\'b9c j\'b9 najpierw wygenerowa\'e6. Haskell generuje warto\'9cci \f2\'84na \f0\'bf\'b9danie\rdblquote . Funkcja map kw przetwarza tylko tyle element\f1\'f3w, ile \f0\'bf\'b9da takeWhile (<50). Gdy funkcja takeWhile natrafi na warto\'9c\'e6 $8 \\times 8 = 64$ (kt\f1\'f3ra jest $\\ge 50$), przerywa pobieranie danych, a generowanie niesko\f0\'f1czonej listy zostaje zatrzymane.Przyk\'b3ad b): Wyra\'bfenie [1..] generuje kolejn\'b9 niesko\'f1czon\'b9 list\'ea, kt\f1\'f3ra jest pierwszym elementem krotki. Jednak funkcja snd (second) pobiera tylko drugi element krotki, czyli liczb\f0\'ea 5. Poniewa\'bf pierwszy element ([1..]) nie jest nigdzie u\'bfywany, Haskell ca\'b3kowicie pomija jego obliczanie. Wynik 5 jest przekazywany do funkcji kw, daj\'b9c 25.Zadanie 2: Typy rekurencyjne w HaskelluTypy rekurencyjne to typy danych, kt\f1\'f3re w swojej definicji odwo\f0\'b3uj\'b9 si\'ea do samych siebie. W podanym przyk\'b3adzie zdefiniowano liczby naturalne w oparciu o aksjomaty Peano:Haskelldata Nat = Zero | Nast Nat\par
+Zero to baza (liczba 0).Nast Nat (nast\'eapnik) to krok rekurencyjny (reprezentuje $n + 1$). Liczba 3 to Nast (Nast (Nast Zero)).Jak dzia\'b3aj\'b9 typy rekurencyjne?Dopasowanie wzorca (Pattern Matching): Funkcje takie jak nat2int, dodNat czy razyNat dekonstruuj\'b9 struktur\'ea krok po kroku. Na przyk\'b3ad nat2int (Nast x) \'9cci\'b9ga jedn\'b9 warstw\'ea Nast, dodaje 1 i wywo\'b3uje si\'ea rekurencyjnie dla x, a\'bf dotrze do konstruktora bazowego Zero.Struktura pami\'eaci: Haskell reprezentuje takie typy jako struktur\'ea wska\'9fnik\f1\'f3w (drzewo/graf). Leniwa ewaluacja pozwala na operowanie nawet na "niesko\f0\'f1czonych" strukturach rekurencyjnych, dop\f1\'f3ki nie spr\'f3bujemy zredukowa\f0\'e6 ich do postaci ostatecznej (whnf).Zadanie 3: Odwracanie listy bez u\'bfycia reverseNajbardziej wydajnym sposobem jest u\'bfycie funkcji pomocniczej z akumulatorem:HaskellmyReverse :: [a] -> [a]\par
+myReverse xs = rev xs []\par
+  where\par
+    rev [] acc = acc\par
+    rev (y:ys) acc = rev ys (y:acc)\par
+Zadanie 4: Tabliczka mno\'bfenia (Sk\'b3adanie list)U\'bfywamy mechanizmu list comprehension dla dw\f1\'f3ch zakres\'f3w od 1 do 12:HaskellmultiplicationTable :: [(Int, Int, Int)]\par
+multiplicationTable = [(x, y, x * y) | x <- [1..12], y <- [1..12]]\par
+Zadanie 5: Kombinacje kolor\'f3w bez powt\'f3rze\f0\'f1Aby wyeliminowa\'e6 duplikaty (np. par\'ea tych samych kolor\f1\'f3w) oraz unika\f0\'e6 permutacji (traktowa\'e6 (red, yellow) i (yellow, red) jako to samo), mo\'bfemy za\'b3o\'bfy\'e6, \'bfe bierzemy pod uwag\'ea tylko te pary (x, y), gdzie x znajduje si\'ea w li\'9ccie wcze\'9cniej ni\'bf y. Wygodnie u\'bfy\'e6 do tego ogon\f1\'f3w listy (tails z modu\f0\'b3u Data.List):Haskellimport Data.List (tails)\par
+\par
+colorPairs :: [(String, String)]\par
+colorPairs = [(x, y) | (x:ys) <- tails colors, y <- ys]\par
+  where\par
+    colors = ["black", "white", "blue", "yellow", "red"]\par
+Zadanie 6: Implementacja podstawowych funkcji operuj\'b9cych na listachHaskell-- a) Konkatenacja dw\f1\'f3ch list\par
+append :: [a] -> [a] -> [a]\par
+append [] m = m\par
+append (x:xs) m = x : append xs m\par
+\par
+-- b) Sprawdzenie czy element nale\f0\'bfy do listy\par
+member :: Eq a => a -> [a] -> Bool\par
+member _ [] = False\par
+member x (y:ys)\par
+  | x == y    = True\par
+  | otherwise = member x ys\par
+\par
+-- c) Znalezienie ostatniego elementu\par
+lastEl :: [a] -> a\par
+lastEl []     = error "Pusta lista nie ma ostatniego elementu!"\par
+lastEl [x]    = x\par
+lastEl (_:xs) = lastEl xs\par
+\par
+-- d) Skasowanie PIERWSZEGO wyst\'b9pienia elementu x z listy\par
+deleteEl :: Eq a => a -> [a] -> [a]\par
+deleteEl _ [] = []\par
+deleteEl x (y:ys)\par
+  | x == y    = ys\par
+  | otherwise = y : deleteEl x ys\par
+\par
+-- e) Podzia\'b3 na elementy mniejsze i wi\'eaksze (r\f1\'f3wne pomijamy lub wrzucamy do l2)\par
+split :: Ord a => a -> [a] -> ([a], [a])\par
+split _ [] = ([], [])\par
+split x (y:ys)\par
+  | y < x     = (y : l1, l2)\par
+  | otherwise = (l1, y : l2)\par
+  where\par
+    (l1, l2) = split x ys\par
+Zadanie 7: Funkcja filterFunkcja przyjmuje predykat (funkcj\f0\'ea zwracaj\'b9c\'b9 Bool) oraz list\'ea, a nast\'eapnie zwraca list\'ea element\f1\'f3w spe\f0\'b3niaj\'b9cych ten warunek.Typ funkcji:Haskellfilter :: (a -> Bool) -> [a] -> [a]\par
+Implementacja:HaskellmyFilter :: (a -> Bool) -> [a] -> [a]\par
+myFilter _ [] = []\par
+myFilter p (x:xs)\par
+  | p x       = x : myFilter p xs\par
+  | otherwise = myFilter p xs\par
+Zadanie 8: Funkcja onlyEvenU\'bfywamy wbudowanej funkcji even oraz zaimplementowanej wy\'bfej logiki filtrowania:HaskellonlyEven :: Integral a => [a] -> [a]\par
+onlyEven xs = filter even xs\par
+Zadanie 9: Funkcja doubleAllPrzemno\'bfenie ka\'bfdego elementu przez 2 realizujemy najpro\'9cciej za pomoc\'b9 mapowania (map):HaskelldoubleAll :: Num a => [a] -> [a]\par
+doubleAll xs = map (*2) xs\par
+Zadanie 10: Suma cyfr liczby (sumOfDigits)Najpierw zamieniamy liczb\'ea na jej warto\'9c\'e6 bezwzgl\'eadn\'b9 (\'bfeby poprawnie obs\'b3ugiwa\'e6 liczby ujemne). Nast\'eapnie sumujemy cyfry poprzez pobieranie reszty z dzielenia przez 10 (mod 10) i rekurencyjne przechodzenie do wy\'bfszych rz\'ead\f1\'f3w wielko\f0\'9cci (div 10).HaskellsumOfDigits :: Integral a => a -> a\par
+sumOfDigits n = sumDigits (abs n)\par
+  where\par
+    sumDigits 0 = 0\par
+    sumDigits x = (x `mod` 10) + sumDigits (x `div` 10)\line\line Prolog\par
+Oto rozwi\'b9zania zada\'f1 w j\'eazyku Prolog wraz z obja\'9cnieniami i wynikami zapyta\'f1.\par
+\par
+Zadanie 1: Mitologiczne drzewo genealogiczne\par
+Baza wiedzy definiuje relacj\'ea rodzice(Ojciec, Matka, Dziecko). Aby znale\'9f\'e6 rodzic\f1\'f3w Zeusa, musimy zada\f0\'e6 pytanie, w kt\f1\'f3rym szukanymi zmiennymi (zaczynaj\f0\'b9cymi si\'ea od wielkiej litery, np. Ojciec, Matka) b\'ead\'b9 rodzice, a trzecim argumentem b\'eadzie atom zeus.\par
+\par
+Zapytanie do Prologa:\par
+\par
+Prolog\par
+?- rodzice(Ojciec, Matka, zeus).\par
+Wynik:\par
+\par
+Prolog\par
+Ojciec = cronus,\par
+Matka = rhea.\par
+Zadanie 2: Algorytm Euklidesa w Prologu (NWD)\par
+Prolog jest j\'eazykiem deklaratywnym, wi\'eac p\'eatl\'ea while oraz instrukcje warunkowe if..else zast\'eapuje si\'ea tu rekurencj\'b9 oraz odpowiednimi warunkami brzegowymi w regu\'b3ach.\par
+\par
+Prolog\par
+% Warunek zako\'f1czenia: je\'9cli obie liczby s\'b9 r\f1\'f3wne, to NWD jest r\'f3wny tej liczbie.\par
+nwd(X, X, X).\par
+\par
+% Przypadek gdy X > Y: odejmujemy Y od X i wywo\f0\'b3ujemy rekurencyjnie.\par
+nwd(X, Y, Nwd) :-\par
+    X > Y,\par
+    Roznica is X - Y,\par
+    nwd(Roznica, Y, Nwd).\par
+\par
+% Przypadek gdy X < Y: odejmujemy X od Y i wywo\'b3ujemy rekurencyjnie.\par
+nwd(X, Y, Nwd) :-\par
+    X < Y,\par
+    Roznica is Y - X,\par
+    nwd(X, Roznica, Nwd).\par
+Zadanie 3: Baza danych fabryki (bez u\'bfycia list)\par
+Aby zamodelowa\'e6 relacje "wiele do wielu" (jeden produkt sk\'b3ada si\'ea z wielu sk\'b3adnik\f1\'f3w) bez u\f0\'bfycia list, rozbijamy t\'ea struktur\'ea na pojedyncze fakty, podobnie jak w relacyjnych bazach danych (SQL).\par
+\par
+Prolog\par
+% --- BAZA DANYCH ---\par
+\par
+% Potrzebne sk\'b3adniki dla poszczeg\f1\'f3lnych produkt\'f3w:\par
+potrzebuje(p1, s1).\par
+potrzebuje(p1, s2).\par
+\par
+potrzebuje(p2, s1).\par
+potrzebuje(p2, s3).\par
+potrzebuje(p2, s4).\par
+\par
+potrzebuje(p3, s2).\par
+potrzebuje(p3, s4).\par
+\par
+% Aktualnie dost\f0\'eapne sk\'b3adniki w fabryce:\par
+dostepny(s1).\par
+dostepny(s2).\par
+dostepny(s4).\par
+% (Celowo brakuje s3, wi\'eac p2 nie b\'eadzie m\f1\'f3g\f0\'b3 by\'e6 wyprodukowany)\par
+\par
+\par
+% --- RELACJE / REGU\'a3Y ---\par
+\par
+% Produkt X mo\'bfna wyprodukowa\'e6, je\'9cli NIE istnieje taki sk\'b3adnik Y, \par
+% kt\f1\'f3ry jest potrzebny do X, ale NIE jest obecnie dost\f0\'eapny.\par
+moznaprodukowac(X) :-\par
+    % Sprawd\'9f czy produkt w og\f1\'f3le istnieje w bazie\par
+    potrzebuje(X, _), \par
+    % \\+ to operator negacji w Prologu (not)\par
+    \\+ (potrzebuje(X, Y), \\+ dostepny(Y)).\par
+Przyk\f0\'b3adowe zapytanie:\par
+\par
+Prolog\par
+?- moznaprodukowac(X).\par
+X = p1 ;\par
+X = p3.\par
+Zadanie 4: Zastosowania instrukcji append/3\par
+Wykonanie podanych polece\'f1 w konsoli Prologa przyniesie nast\'eapuj\'b9ce rezultaty:\par
+\par
+?- append([olej], [woda], [olej, woda]).\par
+\par
+Wynik: true. (Prolog potwierdza, \'bfe po\'b3\'b9czenie tych list daje oczekiwany wynik).\par
+\par
+?- append([olej], [woda], Co).\par
+\par
+Wynik: Co = [olej, woda]. (Klasyczne \'b3\'b9czenie list).\par
+\par
+?- append([olej], Co, [olej, woda]).\par
+\par
+Wynik: Co = [woda]. (Prolog odgaduje brakuj\'b9c\'b9 cz\'ea\'9c\'e6 listy).\par
+\par
+Zastosowania append:\par
+Dzi\'eaki mechanizmowi unifikacji i nawracania (backtracking), append/3 w Prologu nie jest zwyk\'b3\'b9 funkcj\'b9 \'b3\'b9cz\'b9c\'b9, lecz relacj\'b9 wielokierunkow\'b9. Jej g\'b3\f1\'f3wne zastosowania to:\par
+\par
+Sklejanie dw\'f3ch list w jedn\f0\'b9 (gdy znamy dwie pierwsze listy).\par
+\par
+Dzielenie listy na cz\'ea\'9cci / szukanie podlist (gdy znamy trzeci\'b9 list\'ea, Prolog potrafi wygenerowa\'e6 wszystkie kombinacje podzia\'b3u).\par
+\par
+Odejmowanie/usuwanie prefiks\f1\'f3w lub sufiks\'f3w (tak jak w trzecim podpunkcie zadania).\par
+\par
+Sprawdzanie, czy lista zaczyna si\f0\'ea lub ko\'f1czy danym elementem/ci\'b9giem.\par
+\par
+Zadanie 5: Zastosowanie instrukcji select/3\par
+Predykat select(Element, ListaZElementem, ListaBezElementu) s\'b3u\'bfy do operacji usuwania lub wstawiania elementu do listy.\par
+\par
+Wykonanie polece\'f1:\par
+\par
+?- select(X,[1,2,3],L).\par
+Prolog po kolei wybiera ka\'bfdy element X z listy, zwracaj\'b9c w L list\'ea bez tego elementu:\par
+\par
+X = 1, L = [2, 3] ;\par
+\par
+X = 2, L = [1, 3] ;\par
+\par
+X = 3, L = [1, 2].\par
+\par
+?- select(a,L,[1,2,3]).\par
+Dzia\'b3anie w drug\'b9 stron\'ea \f2\endash  Prolog szuka takiej listy L, z kt\f1\'f3rej po usuni\f0\'eaciu a otrzymamy [1, 2, 3]. Efektem jest wstawienie elementu a na ka\'bfd\'b9 mo\'bfliw\'b9 pozycj\'ea:\par
+\par
+L = [a, 1, 2, 3] ;\par
+\par
+L = [1, a, 2, 3] ;\par
+\par
+L = [1, 2, a, 3] ;\par
+\par
+L = [1, 2, 3, a].\par
+\par
+Zastosowanie select:\par
+Usuwanie elementu z listy (konkretnego lub dowolnego w celu iteracji).\par
+\par
+Wstawianie elementu do listy na wszystkie mo\'bfliwe pozycje.\par
+\par
+Generowanie permutacji zbioru (w po\'b3\'b9czeniu z rekurencj\'b9 pozwala \'b3atwo wymiesza\'e6 elementy listy).\f1\lang21\par
+}
+ 
